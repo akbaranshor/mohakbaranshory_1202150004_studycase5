@@ -29,23 +29,20 @@ import java.util.HashMap;
 public class SettingActivity extends AppCompatActivity {
     ListView listView;
     CardView cardView;
-    String valcolor;
+    String valcolor = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         listView = findViewById(R.id.listView);
+        cardView = (CardView) findViewById(R.id.card_view);
 
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(getString(R.string.saved_high_score), "sa");
-        editor.commit();
+        SharedPreferences sharedPreferences = getSharedPreferences("cardcolor", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                cardView = (CardView) findViewById(R.id.card_view);
-        valcolor = "Red";
-        String[] strings = {"Shape Color\n"+valcolor};
-        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strings));
-
+        String[] strings = {"Shape Color\n"+sharedPreferences.getString("colorName", "")};
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strings);
+        listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> adapterView, View view, int i, long l) {
@@ -63,19 +60,25 @@ public class SettingActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //Mengambil nilai yang di cek/pilih
+                        SharedPreferences sharedPreferences = getSharedPreferences("cardcolor", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        int color = 0;
 
-                        TodoList todoList = new TodoList(1);
                         switch(rg.getCheckedRadioButtonId()){
                             //Melakuakan Pengambilan nilai
                             // optionShapeColor untuk ID RadioButton
                             // shapeColor untuk Kode Warna
-                            case R.id.rShapeColorRed: todoList.color = Color.RED; valcolor = "Red"; break;
-                            case R.id.rShapeColorBlue: todoList.color = Color.BLUE; valcolor = "Blue"; break;
-                            case R.id.rShapeColorGreen: todoList.color = Color.GREEN; valcolor = "Green"; break;
+                            case R.id.rShapeColorRed: color = Color.RED; valcolor = "Red"; break;
+                            case R.id.rShapeColorBlue: color = Color.BLUE; valcolor = "Blue"; break;
+                            case R.id.rShapeColorGreen: color = Color.GREEN; valcolor = "Green"; break;
                         }
-                        listView.invalidateViews();
+                        editor.putInt("color", color);
+                        editor.putString("colorName", valcolor);
+                        editor.apply();
+                        startActivity(getIntent());
                     }
                 });
+
 
                 dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -89,18 +92,6 @@ public class SettingActivity extends AppCompatActivity {
 
             }
         });
-        /*switch (valColor){
-            case "Red":
-                cardView.setCardBackgroundColor(Color.RED);
-                break;
-            case "Blue":
-                cardView.setCardBackgroundColor(Color.BLUE);
-                break;
-            case "Green":
-                cardView.setCardBackgroundColor(Color.GREEN);
-                break;
-        }
-        */
 
     }
 }

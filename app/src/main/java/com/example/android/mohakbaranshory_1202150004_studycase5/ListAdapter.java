@@ -17,26 +17,34 @@ import java.util.List;
  */
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder>{
+    // Deklarasi Context
     Context context;
+    // Deklarasi ArrayList
     ArrayList<TodoList> lists;
+    // Deklarasi variabel
     int color;
 
 
+    // Konstruktor
     public ListAdapter(Context context, ArrayList<TodoList> lists, int color) {
         this.context = context;
         this.lists = lists;
         this.color = color;
     }
 
+    // Menyatukan layout list_todo.xml dengan recycleview
     @Override
     public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ListViewHolder(LayoutInflater.from(context).inflate(R.layout.list_todo, parent, false));
     }
 
+    // Membinding data yang didapat dari recycleview
     @Override
     public void onBindViewHolder(ListViewHolder holder, int position) {
+        // Get posisi
         TodoList todoList = lists.get(position);
 
+        // set text pada layout
         holder.name.setText(todoList.getName());
         holder.description.setText(todoList.getDescription());
         holder.priority.setText(Integer.toString(todoList.getPriority()));
@@ -44,17 +52,22 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
     }
 
+    // Mengembalikan nilai besar pada list
     @Override
     public int getItemCount() {
         return lists.size();
     }
 
+    // Inner Class
     class ListViewHolder extends RecyclerView.ViewHolder{
+        // Deklarasi Elemen
         TextView name, description, priority;
         CardView cardView;
 
+        // Konstruktor
         public ListViewHolder(View itemView) {
             super(itemView);
+            //Inisiasi pada elemen masing-masing
             name = itemView.findViewById(R.id.todo_txt);
             description = itemView.findViewById(R.id.description_txt);
             priority = itemView.findViewById(R.id.priority_txt);

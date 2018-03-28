@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,9 +31,12 @@ import java.util.ArrayList;
 import javax.security.auth.Subject;
 
 public class MainActivity extends AppCompatActivity {
+    // Deklarasi variabel
     RecyclerView recyclerView;
     ArrayList<TodoList> todoLists;
     ListAdapter listAdapter;
+
+    // Instansiasi DatabaseHelper
     DatabaseHelper databaseHelper = new DatabaseHelper(this);
 
 
@@ -40,19 +44,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         TodoList t = new TodoList(1);
+
+        // Inisiasi pada variabel
         recyclerView = findViewById(R.id.recycleView);
-
+        // memetakan recycleview
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Mmebuat array list
         todoLists = new ArrayList<>();
+        // Get sharedpreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("cardcolor", MODE_PRIVATE);
 
-        listAdapter = new ListAdapter(this, todoLists, t.getColor());
+        // Membuatobjeck
+        listAdapter = new ListAdapter(this, todoLists, sharedPreferences.getInt("color", 0));
+        // Set adapter pada recycleview
         recyclerView.setAdapter(listAdapter);
 
+        // Membuka database
         final SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
+        // Query
         String selectQuery = "SELECT  name, description, priority FROM list";
 
+        // Cursor
         Cursor c = db.rawQuery(selectQuery, null);
 
         if (c.moveToFirst()) {
